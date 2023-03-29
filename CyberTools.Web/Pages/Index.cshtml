@@ -1,0 +1,32 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Custom Google Search</h1>
+    <p>by Drew Brasher <a href="https://drewbrasher.com">drewbrasher.com</a></p>
+    <form method="get">
+        <input asp-for="SearchQuery" class="form-control" />
+        <button type="submit" class="btn btn-primary">Search</button>
+    </form>
+</div>
+@if (Model.SearchResults.Any())
+    {
+        foreach (var item in Model.SearchResults)
+        {
+        var domainName = item.DisplayLink.Replace("www.", "");
+        <div class="row">
+            <div class="col">
+                @Html.Raw(item.HtmlTitle)<br />
+                <a href="@item.Link" target="_blank">@item.Link</a>
+            </div>
+            <div class="col">
+                <p><a href="https://dnsquery.org/whois/@domainName" target="_blank">DNSQuery for @domainName</a></p>
+                <p><a href="https://www.whoxy.com/@domainName" target="_blank">WHOXY for @domainName</a></p>
+            </div>
+        </div>
+        <hr />
+    }
+}
