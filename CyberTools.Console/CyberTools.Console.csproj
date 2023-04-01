@@ -12,5 +12,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Whois" Version="3.0.1" />
+    <PackageReference Include="IPinfo" Version="2.1.0" />
   </ItemGroup>
 </Project>

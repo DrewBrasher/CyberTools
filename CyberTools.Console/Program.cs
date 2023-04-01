@@ -1,8 +1,13 @@
 ﻿using System.Net;
 using CyberTools.WebSearch;
+using IPinfo;
 using Whois;
 
 var whois = new WhoisLookup();
+var ipInfoToken = "MY_TOKEN"; // TODO: Move to appsettings.json
+var ipInfoClient = new IPinfoClient.Builder()
+    .AccessToken(ipInfoToken)
+    .Build();
 
 if (args == null || args.Length == 0 || args.Length % 2 != 0)
 {
@@ -66,14 +71,15 @@ void CreateFromDomains(IList<string> domains)
 
 void AddDomainInfo(IList<string> lineParts, string domainName)
 {
-    var iPAddresses = Dns.GetHostAddresses(domainName);
+    var ipAddress = Dns.GetHostAddresses(domainName).FirstOrDefault()?.ToString();
     var whoisInfo = whois.Lookup(domainName);
+    var ipInfo = ipInfoClient.IPApi.GetDetails(ipAddress);
 
     lineParts.Add(domainName);
     lineParts.Add(whoisInfo?.Registrar?.Name);
     lineParts.Add(whoisInfo?.Registered == null ? "" : whoisInfo.Registered.Value.ToString("yyyy-MM-dd"));
-    lineParts.Add(iPAddresses.FirstOrDefault()?.ToString());
-    lineParts.Add(""); //TODO: get country
+    lineParts.Add(ipAddress);
+    lineParts.Add(ipInfo.Country);
     lineParts.Add(whoisInfo?.Registrar?.IanaId);
-    lineParts.Add(""); // TODO: get AS Organization
+    lineParts.Add(ipInfo.Asn.Name);
 }
