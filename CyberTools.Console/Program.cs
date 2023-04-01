@@ -67,6 +67,7 @@ void CreateFromDomains(IList<string> domains)
 
         lines.Add($"\"{string.Join("\",\"", lineParts)}\"");
     }
+    File.WriteAllLines("DomainInfo.csv", lines);
 }
 
 void AddDomainInfo(IList<string> lineParts, string domainName)
@@ -75,11 +76,13 @@ void AddDomainInfo(IList<string> lineParts, string domainName)
     var whoisInfo = whois.Lookup(domainName);
     var ipInfo = ipInfoClient.IPApi.GetDetails(ipAddress);
 
+    var asInfo = ipInfo.Org.Split(" ", 2);
+
     lineParts.Add(domainName);
     lineParts.Add(whoisInfo?.Registrar?.Name);
     lineParts.Add(whoisInfo?.Registered == null ? "" : whoisInfo.Registered.Value.ToString("yyyy-MM-dd"));
     lineParts.Add(ipAddress);
     lineParts.Add(ipInfo.Country);
-    lineParts.Add(whoisInfo?.Registrar?.IanaId);
-    lineParts.Add(ipInfo.Asn.Name);
+    lineParts.Add(asInfo[0].Replace("AS", ""));
+    lineParts.Add(asInfo[1]);
 }
