@@ -40,4 +40,19 @@ public partial class GoogleSearchService
         var searchResponse = client.GetJson<GoogleSearchResponse>(resourceUrl);
          return searchResponse;
     }
+
+    public string GetAnnotationsXml(IEnumerable<string> excludeDomains, string comment) 
+    {
+        var excludeXml = "";
+
+        foreach (var domain in excludeDomains)
+        {
+            excludeXml += @$"<Annotation about=""*.{domain}/*"">
+                                <Label name=""_exclude_""/>
+                                <Comment>{comment}</Comment>
+                              </Annotation>";
+        }
+
+        return $"<Annotations>{excludeXml}</Annotations>";
+    }
 }
