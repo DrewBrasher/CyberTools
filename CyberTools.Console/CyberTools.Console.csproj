@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -11,10 +11,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <ProjectReference Include="..\CyberTools.Files\CyberTools.Files.csproj" />
     <ProjectReference Include="..\CyberTools.WebSearch\CyberTools.WebSearch.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Whois" Version="3.0.1" />
-    <PackageReference Include="IPinfo" Version="2.1.0" />
   </ItemGroup>
 </Project>
