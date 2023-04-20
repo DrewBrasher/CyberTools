@@ -28,7 +28,9 @@ if (argDictionary.ContainsKey("-domainsToCsv"))
 
 if(argDictionary.ContainsKey("-googleAnnotations"))
 {
+    var fileName = argDictionary["-googleAnnotations"];
     var googleSearch = new GoogleSearchService();
-    var excludeDomains = File.ReadAllLines(argDictionary["-googleAnnotations"]);
-    googleSearch.GetAnnotationsXml(excludeDomains, "");
+    var excludeDomains = File.ReadAllLines(fileName);
+    var xmlString = googleSearch.GetAnnotationsXml(excludeDomains, fileName.Substring(fileName.LastIndexOf("\\") + 1));
+    File.WriteAllText(fileName.Substring(0, fileName.LastIndexOf(".")) + ".xml", xmlString);
 }

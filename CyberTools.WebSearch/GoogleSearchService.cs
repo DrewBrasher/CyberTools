@@ -47,6 +47,8 @@ public partial class GoogleSearchService
 
         foreach (var domain in excludeDomains)
         {
+            if(string.IsNullOrWhiteSpace(domain)) { continue; }
+
             excludeXml += @$"<Annotation about=""*.{domain}/*"">
                                 <Label name=""_exclude_""/>
                                 <Comment>{comment}</Comment>
