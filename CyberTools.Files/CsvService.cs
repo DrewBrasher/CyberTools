@@ -64,18 +64,26 @@ public class CsvService
 
     protected void AddDomainInfo(IList<string> lineParts, string domainName)
     {
-        var ipAddress = Dns.GetHostAddresses(domainName).FirstOrDefault()?.ToString();
-        var whoisInfo = _whois.Lookup(domainName);
-        var ipInfo = _ipInfoClient.IPApi.GetDetails(ipAddress);
-
-        var asInfo = ipInfo.Org.Split(" ", 2);
-
         lineParts.Add(domainName);
-        lineParts.Add(whoisInfo?.Registrar?.Name);
-        lineParts.Add(whoisInfo?.Registered == null ? "" : whoisInfo.Registered.Value.ToString("yyyy-MM-dd"));
-        lineParts.Add(ipAddress);
-        lineParts.Add(ipInfo.Country);
-        lineParts.Add(asInfo[0].Replace("AS", ""));
-        lineParts.Add(asInfo[1]);
+        try
+        {
+            var ipAddresses = Dns.GetHostAddresses(domainName);
+            var ipAddress = ipAddresses.LastOrDefault()?.ToString();
+            var whoisInfo = _whois.Lookup(domainName);
+            var ipInfo = _ipInfoClient.IPApi.GetDetails(ipAddress);
+
+            var asInfo = ipInfo.Org.Split(" ", 2);
+
+            lineParts.Add(whoisInfo?.Registrar?.Name);
+            lineParts.Add(whoisInfo?.Registered == null ? "" : whoisInfo.Registered.Value.ToString("yyyy-MM-dd"));
+            lineParts.Add(ipAddress);
+            lineParts.Add(ipInfo.Country);
+            lineParts.Add(asInfo[0].Replace("AS", ""));
+            lineParts.Add(asInfo[1]);
+        }
+        catch(Exception ex)
+        {
+            lineParts.Add("Error getting domain info,,,,,");
+        }
     }
 }
