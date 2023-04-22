@@ -26,7 +26,10 @@ public class CsvService
     public void CreateFromSearch(string searchQuery, string? dateRestrict = null)
     {
         var googleSearch = new GoogleSearchService();
-        var lines = new List<string>();
+        var lines = new List<string>
+        {
+            "Domain,Registrar,Date Registered,IP Address,Country,AS Number,AS Organization,Search Engine Used,Search Term/Image Used,Search Result Title,Search Result Link"
+        };
 
         // Get 100 results, 10 at a time, which is the max google allows.
         for(var i = 1; i < 91; i += 10)
@@ -51,7 +54,10 @@ public class CsvService
 
     public void CreateFromDomains(IList<string> domains)
     {
-        var lines = new List<string>();
+        var lines = new List<string>
+        {
+            "Domain,Registrar,Date Registered,IP Address,Country,AS Number,AS Organization"
+        };
         foreach(var domainName in domains)
         {
             var lineParts = new List<string?>();
