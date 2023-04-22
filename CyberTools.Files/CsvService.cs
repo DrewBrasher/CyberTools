@@ -25,28 +25,18 @@ public class CsvService
 
     public void CreateFromSearch(string searchQuery, string? dateRestrict = null)
     {
-        var googleSearch = new GoogleSearchService();
-        var lines = new List<string>
-        {
-            "Domain,Registrar,Date Registered,IP Address,Country,AS Number,AS Organization,Search Engine Used,Search Term/Image Used,Search Result Title,Search Result Link"
-        };
+        var lines = GetSearchData(searchQuery, dateRestrict);
+        File.WriteAllLines("SearchResults.csv", lines);
+    }
 
-        // Get 100 results, 10 at a time, which is the max google allows.
-        for(var i = 1; i < 91; i += 10)
+    public void CreateFromSearch(IEnumerable<string> searchQueries, string? dateRestrict = null)
+    {
+        var lines = new List<string>();
+        foreach (var query in searchQueries)
         {
-            var googleResults = googleSearch.Search(searchQuery, i, dateRestrict); // use "m6" to get next page of results no older than 6 months
-            if(googleResults.Items == null) { break; }
-            foreach(var item in googleResults.Items)
+            if(!string.IsNullOrWhiteSpace(query))
             {
-                var lineParts = new List<string?>();
-                var domainName = item.DisplayLink.Replace("www.", "");
-                AddDomainInfo(lineParts, domainName);
-                lineParts.Add("Google Custom Search");
-                lineParts.Add(searchQuery);
-                lineParts.Add(item.Title);
-                lineParts.Add(item.Link);
-
-                lines.Add($"\"{string.Join("\",\"", lineParts)}\"");
+                lines.AddRange(GetSearchData(query, dateRestrict));
             }
         }
         File.WriteAllLines("SearchResults.csv", lines);
@@ -91,5 +81,34 @@ public class CsvService
         {
             lineParts.Add("Error getting domain info,,,,,");
         }
+    }
+
+    protected List<string> GetSearchData(string searchQuery, string? dateRestrict = null)
+    {
+        var googleSearch = new GoogleSearchService();
+        var lines = new List<string>
+        {
+            "Domain,Registrar,Date Registered,IP Address,Country,AS Number,AS Organization,Search Engine Used,Search Term/Image Used,Search Result Title,Search Result Link"
+        };
+
+        // Get 100 results, 10 at a time, which is the max google allows.
+        for(var i = 1; i < 91; i += 10)
+        {
+            var googleResults = googleSearch.Search(searchQuery, i, dateRestrict); // use "m6" to get next page of results no older than 6 months
+            if(googleResults.Items == null) { break; }
+            foreach(var item in googleResults.Items)
+            {
+                var lineParts = new List<string?>();
+                var domainName = item.DisplayLink.Replace("www.", "");
+                AddDomainInfo(lineParts, domainName);
+                lineParts.Add("Google Custom Search");
+                lineParts.Add(searchQuery);
+                lineParts.Add(item.Title);
+                lineParts.Add(item.Link);
+
+                lines.Add($"\"{string.Join("\",\"", lineParts)}\"");
+            }
+        }
+        return lines;
     }
 }
